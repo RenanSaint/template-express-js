@@ -6,20 +6,20 @@ dotenv.config({path: './.env.dev'});
 const secret = process.env.SECRET
 
 module.exports = function (req, res, next) {
-    const bearerHeader = req.headers.authorization;
-
-    if (bearerHeader) {
-        const token = bearerHeader.split(' ')[1];
+    const authorization = req.headers.authorization;
+    
+    if (authorization) {
+        const token = authorization.split(' ')[1]; // Bearer <token>
 
         jwt.verify(token, secret, (err, user) => {
             if (err) {
-                return res.sendStatus(403);
+                return res.sendStatus(403); // Token inválido
             }
-            req.user = user;
+            req.user = user; // Adicionar informação do usuário à requisição
             next();
         });
 
     } else {
-        res.sendStatus(401);
+        res.sendStatus(401); // Token não fornecido
     }
 }
